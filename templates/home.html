@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Cartelera{% endblock %}
+
+{% block contenido %}
+    <h1>Cartelera</h1>
+
+    {% for pelicula in peliculas %}
+        <div>
+            <img src="{{ pelicula.imagen.url }}" alt="{{ pelicula.titulo }}">
+            <h2>{{ pelicula.titulo }}</h2>
+            <p>{{ pelicula.genero }} — {{ pelicula.duracion }} min</p>
+            <p>{{ pelicula.sinopsis }}</p>
+            <a href="{% url 'detalle_pelicula' pelicula.pk %}">Ver más</a>
+        </div>
+    {% empty %}
+        <p>No hay películas en cartelera.</p>
+    {% endfor %}
+{% endblock %}

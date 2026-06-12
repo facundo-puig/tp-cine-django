@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block titulo %}{{ pelicula.titulo }}{% endblock %}
+
+{% block contenido %}
+    <a href="{% url 'home' %}">← Volver</a>
+
+    <h1>{{ pelicula.titulo }}</h1>
+    <img src="{{ pelicula.imagen.url }}" alt="{{ pelicula.titulo }}">
+    <p><strong>Género:</strong> {{ pelicula.get_genero_display }}</p>
+    <p><strong>Duración:</strong> {{ pelicula.duracion }} min</p>
+    <p><strong>Estreno:</strong> {{ pelicula.fecha_estreno }}</p>
+    <p>{{ pelicula.sinopsis }}</p>
+
+    {% if pelicula.trailer_url %}
+        <a href="{{ pelicula.trailer_url }}" target="_blank">Ver trailer</a>
+    {% endif %}
+{% endblock %}
