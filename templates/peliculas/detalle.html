@@ -3,16 +3,38 @@
 {% block titulo %}{{ pelicula.titulo }}{% endblock %}
 
 {% block contenido %}
-    <a href="{% url 'home' %}">← Volver</a>
+<a href="{% url 'home' %}" class="text-primary text-sm hover:text-primary-hover transition-colors mb-6 inline-block">
+    ← Volver a cartelera
+</a>
 
-    <h1>{{ pelicula.titulo }}</h1>
-    <img src="{{ pelicula.imagen.url }}" alt="{{ pelicula.titulo }}">
-    <p><strong>Género:</strong> {{ pelicula.get_genero_display }}</p>
-    <p><strong>Duración:</strong> {{ pelicula.duracion }} min</p>
-    <p><strong>Estreno:</strong> {{ pelicula.fecha_estreno }}</p>
-    <p>{{ pelicula.sinopsis }}</p>
+<div class="bg-card border border-borde rounded-xl overflow-hidden">
+    <div class="md:flex">
+        <img src="{{ pelicula.imagen.url }}" alt="{{ pelicula.titulo }}"
+            class="w-full md:w-72 h-80 object-cover flex-shrink-0">
+        <div class="p-8">
+            <div class="flex items-center gap-3 mb-3">
+                <span class="bg-primary text-texto text-xs font-medium px-3 py-1 rounded">
+                    {{ pelicula.get_genero_display }}
+                </span>
+                <span class="text-texto-sec text-sm">{{ pelicula.duracion }} min</span>
+            </div>
+            <h1 class="text-3xl font-semibold text-texto mb-2">{{ pelicula.titulo }}</h1>
+            <p class="text-texto-sec text-sm mb-6">Estreno: {{ pelicula.fecha_estreno }}</p>
+            <p class="text-texto-sec leading-relaxed mb-8">{{ pelicula.sinopsis }}</p>
 
-    {% if pelicula.trailer_url %}
-        <a href="{{ pelicula.trailer_url }}" target="_blank">Ver trailer</a>
-    {% endif %}
+            <div class="flex gap-3">
+                <a href="#"
+                    class="inline-block bg-primary hover:bg-primary-hover text-texto text-sm font-semibold px-5 py-2 rounded-lg transition-colors">
+                    Comprar tickets
+                </a>
+                {% if pelicula.trailer_url %}
+                <a href="{{ pelicula.trailer_url }}" target="_blank"
+                    class="inline-block border border-primary text-primary hover:bg-primary hover:text-texto text-sm font-semibold px-5 py-2 rounded-lg transition-colors">
+                    Ver trailer
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

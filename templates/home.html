@@ -3,17 +3,30 @@
 {% block titulo %}Cartelera{% endblock %}
 
 {% block contenido %}
-    <h1>Cartelera</h1>
+<h1 class="text-2xl font-semibold text-texto mb-8">En cartelera</h1>
 
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
     {% for pelicula in peliculas %}
-        <div>
-            <img src="{{ pelicula.imagen.url }}" alt="{{ pelicula.titulo }}">
-            <h2>{{ pelicula.titulo }}</h2>
-            <p>{{ pelicula.genero }} — {{ pelicula.duracion }} min</p>
-            <p>{{ pelicula.sinopsis }}</p>
-            <a href="{% url 'detalle_pelicula' pelicula.pk %}">Ver más</a>
+    <a href="{% url 'detalle_pelicula' pelicula.pk %}"
+        class="bg-card border border-borde rounded-xl overflow-hidden hover:border-primary transition-colors block">
+        <div class="relative aspect-[3/4]">
+            <img src="{{ pelicula.imagen.url }}" alt="{{ pelicula.titulo }}" class="w-full h-full object-cover">
         </div>
+        <div class="p-4">
+            <div class="flex items-center gap-2 mb-2">
+                <span class="bg-primary text-texto text-xs font-medium px-2 py-1 rounded">
+                    {{ pelicula.get_genero_display }}
+                </span>
+                <span class="text-texto-sec text-xs">{{ pelicula.duracion }} min</span>
+            </div>
+            <h2 class="text-texto font-semibold text-lg mb-2">{{ pelicula.titulo }}</h2>
+            <p class="text-texto-sec text-xs">
+                {{ pelicula.formatos|join:" · "|upper }}
+            </p>
+        </div>
+    </a>
     {% empty %}
-        <p>No hay películas en cartelera.</p>
+    <p class="text-texto-sec">No hay películas en cartelera.</p>
     {% endfor %}
+</div>
 {% endblock %}

@@ -1,20 +1,50 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block titulo %}Cine{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'background': '#0F0F0F',
+                        'card': '#1A1A1A',
+                        'primary': '#7C3AED',
+                        'primary-hover': '#8B5CF6',
+                        'texto': '#FFFFFF',
+                        'texto-sec': '#B3B3B3',
+                        'borde': '#2A2A2A',
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
-    <nav>
-        <a href="{% url 'home' %}">Inicio</a>
+
+<body class="bg-background text-texto min-h-screen">
+
+    <nav class="border-b border-borde px-8 py-4 flex items-center justify-between">
+        <a href="{% url 'home' %}" class="text-primary font-semibold text-xl tracking-wide">
+            CineApp
+        </a>
+        <div class="flex gap-6 text-sm text-texto-sec">
+            <a href="{% url 'home' %}" class="hover:text-texto transition-colors">Cartelera</a>
+            <a href="#" class="hover:text-texto transition-colors">Promociones</a>
+        </div>
     </nav>
 
-    <main>
+    <main class="max-w-6xl mx-auto px-6 py-10">
         {% block contenido %}{% endblock %}
     </main>
 
-    <footer>
-        <p>Cine 2026</p>
+    <footer class="border-t border-borde text-center text-texto-sec text-sm py-6 mt-10">
+        © 2025 CineApp
     </footer>
+
 </body>
+
 </html>
