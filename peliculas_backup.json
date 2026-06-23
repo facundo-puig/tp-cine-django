@@ -1,0 +1,62 @@
+[
+{
+  "model": "peliculas.pelicula",
+  "pk": 1,
+  "fields": {
+    "titulo": "Scary Movie 6",
+    "genero": "comedia",
+    "duracion": 95,
+    "sinopsis": "Scary Movie 6 (también conocida como Scary Movie: Terroríficamente Incorrecta) retoma la historia 26 años después de que los protagonistas originales escaparan de un asesino enmascarado. El \"Cuarteto Central\" vuelve a ser perseguido por Ghostface, obligándolos a enfrentarse a un alocado caos de monstruos, criaturas y parodias del cine de terror contemporáneo.",
+    "imagen": "peliculas/scary_movie_6.png",
+    "trailer_url": "https://www.youtube.com/watch?v=UPDjaBBJThU",
+    "en_cartelera": true,
+    "fecha_estreno": "2026-06-04",
+    "formatos": "2d,3d"
+  }
+},
+{
+  "model": "peliculas.pelicula",
+  "pk": 2,
+  "fields": {
+    "titulo": "Backrooms",
+    "genero": "terror",
+    "duracion": 111,
+    "sinopsis": "Una extraña puerta aparece en el sótano de una exposición de muebles. Cuando el paciente de una terapeuta desaparece en una dimensión más allá de la realidad,ella deberá adentrarse en lo desconocido para salvarlo.",
+    "imagen": "peliculas/backrooms.png",
+    "trailer_url": "https://www.youtube.com/watch?v=wcfPJSp2PXk",
+    "en_cartelera": true,
+    "fecha_estreno": "2026-05-28",
+    "formatos": "2d,dbox"
+  }
+},
+{
+  "model": "peliculas.pelicula",
+  "pk": 3,
+  "fields": {
+    "titulo": "Toy Story 5",
+    "genero": "animacion",
+    "duracion": 102,
+    "sinopsis": "Los juguetes están de vuelta en «Toy Story 5»,de Disney y Pixar,y esta vez se enfrentan los juguetes y la tecnología. El trabajo de Buzz,Woody,Jessie y el resto de la pandilla se complica exponencialmente cuando se enfrentan a esta nueva amenaza para el tiempo de juego",
+    "imagen": "peliculas/toy_story_5.png",
+    "trailer_url": "https://www.youtube.com/watch?v=FJiwQyXuHUA",
+    "en_cartelera": true,
+    "fecha_estreno": "2026-06-18",
+    "formatos": "2d,3d,4d,dbox"
+  }
+},
+{
+  "model": "peliculas.pelicula",
+  "pk": 4,
+  "fields": {
+    "titulo": "Mortal Kombat 2",
+    "genero": "accion",
+    "duracion": 116,
+    "sinopsis": "Esta vez,los campeones favoritos de los fans —ahora acompañados por el mismísimo Johnny Cage— se enfrentan entre sí en la batalla definitiva,sangrienta y sin reglas,para derrotar el oscuro dominio de Shao Kahn,que amenaza con destruir el Reino de la Tierra y a sus defensores.",
+    "imagen": "peliculas/mortal_kombat_2.png",
+    "trailer_url": "https://www.youtube.com/watch?v=7p3uotWIvhs",
+    "en_cartelera": true,
+    "fecha_estreno": "2026-05-07",
+    "formatos": "2d"
+  }
+}
+]
