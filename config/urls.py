@@ -8,6 +8,7 @@ from peliculas import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('peliculas.urls')),
+    path('promociones/', include('promociones.urls')),
 ]
 
 if settings.DEBUG:

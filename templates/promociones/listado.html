@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Promociones{% endblock %}
+
+{% block contenido %}
+<div class="flex items-center justify-between mb-8">
+    <h1 class="text-2xl font-semibold text-texto">Promociones</h1>
+    {% if perms.promociones.add_promocion %}
+    <a href="{% url 'crear_promocion' %}"
+        class="bg-primary hover:bg-primary-hover text-texto text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
+        + Agregar promoción
+    </a>
+    {% endif %}
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for promocion in promociones %}
+    <a href="{% url 'detalle_promocion' promocion.pk %}"
+        class="bg-card border border-borde rounded-xl overflow-hidden hover:border-primary transition-colors block">
+        {% if promocion.imagen %}
+        <img src="{{ promocion.imagen.url }}" alt="{{ promocion.titulo }}" class="w-full h-48 object-cover">
+        {% endif %}
+        <div class="p-4">
+            <span class="bg-primary text-texto text-xs font-semibold px-2 py-1 rounded mb-2 inline-block">
+                {{ promocion.descuento }}% OFF
+            </span>
+            <h2 class="text-texto font-semibold text-lg mb-1">{{ promocion.titulo }}</h2>
+            <p class="text-texto-sec text-sm line-clamp-2">{{ promocion.descripcion }}</p>
+            <p class="text-texto-sec text-xs mt-2">Hasta: {{ promocion.fecha_fin }}</p>
+        </div>
+    </a>
+    {% empty %}
+    <p class="text-texto-sec">No hay promociones activas.</p>
+    {% endfor %}
+</div>
+{% endblock %}
