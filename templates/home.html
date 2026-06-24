@@ -60,16 +60,36 @@
 
 <script>
 (function () {
+
+    // ---------------------------------------------------------------
+    // BLOQUE 1: Buscar los elementos del carrusel en la página
+    // ---------------------------------------------------------------
+    // "track" es la franja que contiene todas las promos, una al lado
+    // de la otra. "slides" es la lista de esas promos (cada <a> de
+    // arriba). "dotsWrap" es donde van los puntitos indicadores, y
+    // prevBtn/nextBtn son las flechas de ir para atrás/adelante.
     const track = document.getElementById('carrusel-track');
     const slides = track ? Array.from(track.children) : [];
     const dotsWrap = document.getElementById('carrusel-dots');
     const prevBtn = document.getElementById('carrusel-prev');
     const nextBtn = document.getElementById('carrusel-next');
+
+    // Si no hay carrusel en la página, o hay 1 sola promo (o ninguna),
+    // no tiene sentido mover nada, así que el script se corta acá.
     if (!track || slides.length <= 1) return;
 
+    // "index" guarda en qué promo estamos parados ahora (0 = la primera).
+    // "timer" guarda el cronómetro del avance automático, para poder
+    // pausarlo y reiniciarlo después.
     let index = 0;
     let timer = null;
 
+    // ---------------------------------------------------------------
+    // BLOQUE 2: Crear los puntitos (uno por cada promo)
+    // ---------------------------------------------------------------
+    // Por cada promo, se crea un botón circular chiquito. El primero
+    // arranca "lleno" (resaltado) porque es la promo que se ve al
+    // entrar. Al hacer click en un punto, salta directo a esa promo.
     slides.forEach((_, i) => {
         const dot = document.createElement('button');
         dot.setAttribute('aria-label', 'Ir a la promoción ' + (i + 1));
@@ -78,6 +98,13 @@
         dotsWrap.appendChild(dot);
     });
 
+    // ---------------------------------------------------------------
+    // BLOQUE 3: Dibujar en pantalla qué promo está activa
+    // ---------------------------------------------------------------
+    // Esta función es la que realmente "mueve" el carrusel: desplaza
+    // la franja de promos hacia la izquierda según en qué número
+    // estemos (como pasar las hojas de un álbum, una al costado de
+    // la otra). También actualiza qué puntito se ve resaltado abajo.
     function render() {
         track.style.transform = 'translateX(-' + (index * 100) + '%)';
         Array.from(dotsWrap.children).forEach((dot, i) => {
@@ -85,25 +112,55 @@
         });
     }
 
+    // ---------------------------------------------------------------
+    // BLOQUE 4: Funciones para cambiar de promo
+    // ---------------------------------------------------------------
+    // "goTo" salta a una promo puntual por su número. El cálculo con
+    // "% slides.length" (el resto de la división) es lo que hace que,
+    // al llegar a la última promo y seguir para adelante, vuelva a la
+    // primera en vez de quedarse trabado (y al revés, yendo para atrás
+    // desde la primera, vuelve a la última).
     function goTo(i) {
         index = (i + slides.length) % slides.length;
         render();
         restart();
     }
 
+    // "next" y "prev" son simplemente "ir una promo para adelante" o
+    // "ir una promo para atrás", usando la función de arriba.
     function next() { goTo(index + 1); }
     function prev() { goTo(index - 1); }
 
+    // ---------------------------------------------------------------
+    // BLOQUE 5: Avance automático cada 5 segundos
+    // ---------------------------------------------------------------
+    // "restart" pone en marcha (o reinicia) el cronómetro: cada 5000
+    // milisegundos (5 segundos), avanza sola a la siguiente promo.
+    // Se llama "restart" y no solo "start" porque cada vez que el
+    // usuario interactúa (click en flecha o punto), conviene reiniciar
+    // la cuenta de 5 segundos desde cero, para no cortarle la promo
+    // recién elegida a la mitad.
     function restart() {
         clearInterval(timer);
         timer = setInterval(next, 5000);
     }
 
+    // ---------------------------------------------------------------
+    // BLOQUE 6: Conectar los botones y el mouse a las funciones
+    // ---------------------------------------------------------------
+    // Las flechas llaman a next/prev. Y si el usuario pasa el mouse
+    // por arriba del carrusel, se pausa el avance automático (para
+    // que pueda leer tranquilo); al sacar el mouse, se reanuda.
     nextBtn.addEventListener('click', next);
     prevBtn.addEventListener('click', prev);
     track.parentElement.addEventListener('mouseenter', () => clearInterval(timer));
     track.parentElement.addEventListener('mouseleave', restart);
 
+    // ---------------------------------------------------------------
+    // BLOQUE 7: Arranque inicial
+    // ---------------------------------------------------------------
+    // Apenas carga la página: se dibuja la primera promo (render) y
+    // se pone en marcha el avance automático (restart).
     render();
     restart();
 })();
