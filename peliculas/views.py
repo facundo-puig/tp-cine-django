@@ -1,13 +1,27 @@
+from datetime import date
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import Pelicula
 from .forms import PeliculaForm
+from promociones.models import Promocion
 
 
 # Listado de películas
 def home(request):
     peliculas = Pelicula.objects.filter(en_cartelera=True)
-    return render(request, 'home.html', {'peliculas': peliculas})
+
+    hoy = date.today()
+    promociones_carousel = Promocion.objects.filter(
+        activa=True,
+        fecha_inicio__lte=hoy,
+        fecha_fin__gte=hoy,
+    ).exclude(imagen='')
+
+    return render(request, 'home.html', {
+        'peliculas': peliculas,
+        'promociones_carousel': promociones_carousel,
+    })
 
 # Detalle de película
 def detalle_pelicula(request, pk):

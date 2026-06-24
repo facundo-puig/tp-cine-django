@@ -27,27 +27,63 @@
 
 <body class="bg-background text-texto min-h-screen">
 
-    <nav class="border-b border-borde px-8 py-4 flex items-center justify-between">
-        <a href="{% url 'home' %}" class="text-primary font-semibold text-xl tracking-wide">
-            {{ nombre_cine }}
+    <nav class="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-borde px-8 py-4 flex items-center justify-between">
+        <a href="{% url 'home' %}" class="flex items-center gap-2 group">
+            <svg class="w-6 h-6 text-primary group-hover:text-primary-hover transition-colors" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M3 9h2.2M3 15h2.2M18.8 9H21M18.8 15H21M8 5v14M16 5v14" stroke="currentColor" stroke-width="1.6"/>
+            </svg>
+            <span class="text-texto font-semibold text-xl tracking-wide group-hover:text-primary-hover transition-colors">
+                {{ nombre_cine }}
+            </span>
         </a>
-        <div class="flex gap-6 text-sm text-texto-sec items-center">
-            <a href="{% url 'home' %}" class="hover:text-texto transition-colors">Cartelera</a>
+
+        <!-- Toggle mobile -->
+        <input type="checkbox" id="nav-toggle" class="hidden peer">
+        <label for="nav-toggle" class="md:hidden cursor-pointer text-texto-sec hover:text-texto transition-colors">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/>
+            </svg>
+        </label>
+
+        <div class="hidden peer-checked:flex md:flex flex-col md:flex-row gap-1 md:gap-2 text-sm text-texto-sec items-stretch md:items-center
+                    absolute md:relative top-full left-0 right-0 md:top-auto bg-background md:bg-transparent
+                    border-b md:border-0 border-borde px-8 md:px-0 py-4 md:py-0">
+
+            <a href="{% url 'home' %}"
+                class="relative px-3 py-2 rounded-md hover:text-texto hover:bg-card md:hover:bg-transparent transition-colors
+                       after:absolute after:left-3 after:right-3 after:-bottom-0.5 after:h-px after:bg-primary
+                       after:scale-x-0 after:transition-transform after:origin-left hover:after:scale-x-100">
+                Cartelera
+            </a>
 
             <!-- Dropdown de películas -->
             <div class="relative group">
-                <span class="hover:text-texto transition-colors cursor-pointer">Películas</span>
-                <div class="absolute hidden group-hover:block bg-card border border-borde rounded-lg py-2 w-48 z-10">
+                <span class="flex items-center gap-1 px-3 py-2 rounded-md hover:text-texto hover:bg-card md:hover:bg-transparent transition-colors cursor-pointer">
+                    Películas
+                    <svg class="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+                <div class="static md:absolute md:top-full mt-1 hidden group-hover:block bg-card border border-borde rounded-lg py-2 w-full md:w-52 z-10
+                            shadow-xl shadow-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
                     {% for pelicula in peliculas_cartelera %}
                     <a href="{% url 'detalle_pelicula' pelicula.pk %}"
                         class="block px-4 py-2 text-texto-sec hover:text-texto hover:bg-background transition-colors text-sm">
                         {{ pelicula.titulo }}
                     </a>
+                    {% empty %}
+                    <span class="block px-4 py-2 text-texto-sec/60 text-sm italic">Sin películas</span>
                     {% endfor %}
                 </div>
             </div>
 
-            <a href="{% url 'listado_promociones' %}" class="hover:text-texto transition-colors">Promociones</a>
+            <a href="{% url 'listado_promociones' %}"
+                class="relative px-3 py-2 rounded-md hover:text-texto hover:bg-card md:hover:bg-transparent transition-colors
+                       after:absolute after:left-3 after:right-3 after:-bottom-0.5 after:h-px after:bg-primary
+                       after:scale-x-0 after:transition-transform after:origin-left hover:after:scale-x-100">
+                Promociones
+            </a>
         </div>
     </nav>
 
