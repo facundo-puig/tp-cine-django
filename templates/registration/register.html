@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Registro{% endblock %}
+
+{% block contenido %}
+<div class="max-w-md mx-auto">
+    <h1 class="text-2xl font-semibold text-texto mb-8 text-center">Crear cuenta</h1>
+
+    <form method="post" class="bg-card border border-borde rounded-xl p-8 flex flex-col gap-4">
+        {% csrf_token %}
+        {% for field in form %}
+        <div
+            class="flex {% if field.field.widget.input_type == 'checkbox' %}flex-row items-center gap-2{% else %}flex-col gap-1{% endif %}">
+            <label class="text-texto-sec text-sm">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+            <p class="text-red-500 text-xs">{{ field.errors }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+        <button type="submit"
+            class="bg-primary hover:bg-primary-hover text-texto font-semibold py-2 px-6 rounded-lg transition-colors mt-2">
+            Registrarse
+        </button>
+    </form>
+    <p class="text-texto-sec text-sm text-center mt-4">
+        ¿Ya tenés cuenta? <a href="{% url 'login' %}" class="text-primary hover:text-primary-hover">Iniciá sesión</a>
+    </p>
+</div>
+{% endblock %}

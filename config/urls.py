@@ -2,13 +2,14 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from peliculas import views
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('peliculas.urls')),
     path('promociones/', include('promociones.urls')),
+    path('cuentas/', include('usuarios.urls')),
+    path('cuentas/', include('django.contrib.auth.urls')),
 ]
 
 if settings.DEBUG:

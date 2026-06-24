@@ -29,10 +29,24 @@
 
     <nav class="border-b border-borde px-8 py-4 flex items-center justify-between">
         <a href="{% url 'home' %}" class="text-primary font-semibold text-xl tracking-wide">
-            CineApp
+            {{ nombre_cine }}
         </a>
-        <div class="flex gap-6 text-sm text-texto-sec">
+        <div class="flex gap-6 text-sm text-texto-sec items-center">
             <a href="{% url 'home' %}" class="hover:text-texto transition-colors">Cartelera</a>
+
+            <!-- Dropdown de películas -->
+            <div class="relative group">
+                <span class="hover:text-texto transition-colors cursor-pointer">Películas</span>
+                <div class="absolute hidden group-hover:block bg-card border border-borde rounded-lg py-2 w-48 z-10">
+                    {% for pelicula in peliculas_cartelera %}
+                    <a href="{% url 'detalle_pelicula' pelicula.pk %}"
+                        class="block px-4 py-2 text-texto-sec hover:text-texto hover:bg-background transition-colors text-sm">
+                        {{ pelicula.titulo }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+
             <a href="{% url 'listado_promociones' %}" class="hover:text-texto transition-colors">Promociones</a>
         </div>
     </nav>
@@ -42,7 +56,7 @@
     </main>
 
     <footer class="border-t border-borde text-center text-texto-sec text-sm py-6 mt-10">
-        © 2025 CineApp
+        © {{ year }} {{ nombre_cine }}
     </footer>
 
 </body>

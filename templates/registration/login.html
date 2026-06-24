@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Iniciar sesión{% endblock %}
+
+{% block contenido %}
+<div class="max-w-md mx-auto">
+    <h1 class="text-2xl font-semibold text-texto mb-8 text-center">Iniciar sesión</h1>
+
+    <form method="post" class="bg-card border border-borde rounded-xl p-8 flex flex-col gap-4">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="flex flex-col gap-1">
+            <label class="text-texto-sec text-sm">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+            <p class="text-red-500 text-xs">{{ field.errors }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+        <button type="submit"
+            class="bg-primary hover:bg-primary-hover text-texto font-semibold py-2 px-6 rounded-lg transition-colors mt-2">
+            Iniciar sesión
+        </button>
+    </form>
+    <p class="text-texto-sec text-sm text-center mt-4">
+        ¿No tenés cuenta? <a href="{% url 'register' %}" class="text-primary hover:text-primary-hover">Registrate</a>
+    </p>
+</div>
+{% endblock %}
