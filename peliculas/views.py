@@ -1,10 +1,12 @@
 from datetime import date
 
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import permission_required
 from .models import Pelicula
 from .forms import PeliculaForm
 from promociones.models import Promocion
+from funciones.models import Funcion
+from datetime import date
 
 
 # Listado de películas
@@ -26,7 +28,15 @@ def home(request):
 # Detalle de película
 def detalle_pelicula(request, pk):
     pelicula = get_object_or_404(Pelicula, pk=pk)
-    return render(request, 'peliculas/detalle.html', {'pelicula': pelicula})
+    hoy = date.today()
+    funciones = Funcion.objects.filter(
+        pelicula=pelicula,
+        fecha__gte=hoy
+    ).order_by('fecha', 'hora')
+    return render(request, 'peliculas/detalle.html', {
+        'pelicula': pelicula,
+        'funciones': funciones,
+    })
 
 # Crear película
 @permission_required('peliculas.add_pelicula')

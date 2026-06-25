@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from funciones.models import Funcion
 from candy.models import Producto
+from salas.models import Asiento
 
 # Create your models here.
 
@@ -15,6 +16,7 @@ class Reserva(models.Model):
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='reservas')
     funcion = models.ForeignKey(Funcion, on_delete=models.CASCADE, related_name='reservas')
     cantidad_entradas = models.PositiveIntegerField(default=1)
+    asientos = models.ManyToManyField(Asiento, blank=True)
     productos = models.ManyToManyField(Producto, through='ReservaProducto', blank=True)
     estado = models.CharField(max_length=20, choices=ESTADOS, default='pendiente')
     fecha_creacion = models.DateTimeField(auto_now_add=True)

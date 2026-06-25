@@ -7,46 +7,154 @@
     ← Volver a cartelera
 </a>
 
-<div class="bg-card border border-borde rounded-xl overflow-hidden">
-    <div class="md:flex">
-        <img src="{{ pelicula.imagen.url }}" alt="{{ pelicula.titulo }}"
-            class="w-full md:w-72 h-80 object-cover flex-shrink-0">
-        <div class="p-8">
-            <div class="flex items-center gap-3 mb-3">
-                <span class="bg-primary text-texto text-xs font-medium px-3 py-1 rounded">
-                    {{ pelicula.get_genero_display }}
-                </span>
-                <span class="text-texto-sec text-sm">{{ pelicula.duracion }} min</span>
-            </div>
-            <h1 class="text-3xl font-semibold text-texto mb-2">{{ pelicula.titulo }}</h1>
-            <p class="text-texto-sec text-sm mb-6">Estreno: {{ pelicula.fecha_estreno }}</p>
-            <p class="text-texto-sec leading-relaxed mb-8">{{ pelicula.sinopsis }}</p>
+<div class="md:flex gap-16">
 
-            <div class="flex gap-3">
-                <a href="#"
-                    class="inline-block bg-primary hover:bg-primary-hover text-texto text-sm font-semibold px-5 py-2 rounded-lg transition-colors">
-                    Comprar tickets
-                </a>
-                {% if pelicula.trailer_url %}
-                <a href="{{ pelicula.trailer_url }}" target="_blank"
-                    class="inline-block border border-primary text-primary hover:bg-primary hover:text-texto text-sm font-semibold px-5 py-2 rounded-lg transition-colors">
-                    Ver trailer
-                </a>
-                {% endif %}
-                {% if perms.peliculas.change_pelicula %}
-                <a href="{% url 'editar_pelicula' pelicula.pk %}"
-                    class="inline-block border border-primary text-primary hover:bg-primary hover:text-texto text-sm font-semibold px-5 py-2 rounded-lg transition-colors">
-                    Editar
-                </a>
-                {% endif %}
-                {% if perms.peliculas.delete_pelicula %}
-                <a href="{% url 'eliminar_pelicula' pelicula.pk %}"
-                    class="inline-block border border-red-600 text-red-600 hover:bg-red-600 hover:text-texto text-sm font-semibold px-5 py-2 rounded-lg transition-colors">
-                    Eliminar
-                </a>
-                {% endif %}
-            </div>
+    <!-- Columna izquierda: imagen + info -->
+    <div class="md:w-72 flex-shrink-0">
+        <img src="{{ pelicula.imagen.url }}" alt="{{ pelicula.titulo }}" class="w-full rounded-xl object-cover mb-4">
+        <div class="flex items-center gap-3 mb-3">
+            <span class="bg-primary text-texto text-xs font-medium px-3 py-1 rounded">
+                {{ pelicula.get_genero_display }}
+            </span>
+            <span class="text-texto-sec text-sm">{{ pelicula.duracion }} min</span>
+        </div>
+        <h1 class="text-2xl font-semibold text-texto mb-2">{{ pelicula.titulo }}</h1>
+        <p class="text-texto-sec text-sm mb-3">Estreno: {{ pelicula.fecha_estreno }}</p>
+        <p class="text-texto-sec text-sm leading-relaxed mb-4">{{ pelicula.sinopsis }}</p>
+        <p class="text-texto-sec text-xs">{{ pelicula.formatos|join:" · "|upper }}</p>
+
+        <div class="flex gap-3 mt-6 flex-wrap">
+            {% if pelicula.trailer_url %}
+            <a href="{{ pelicula.trailer_url }}" target="_blank"
+                class="inline-block border border-primary text-primary hover:bg-primary hover:text-texto text-sm font-semibold px-5 py-2 rounded-lg transition-colors">
+                Ver trailer
+            </a>
+            {% endif %}
+            {% if perms.peliculas.change_pelicula %}
+            <a href="{% url 'editar_pelicula' pelicula.pk %}"
+                class="inline-block border border-primary text-primary hover:bg-primary hover:text-texto text-sm font-semibold px-5 py-2 rounded-lg transition-colors">
+                Editar
+            </a>
+            {% endif %}
+            {% if perms.peliculas.delete_pelicula %}
+            <a href="{% url 'eliminar_pelicula' pelicula.pk %}"
+                class="inline-block border border-red-600 text-red-600 hover:bg-red-600 hover:text-texto text-sm font-semibold px-5 py-2 rounded-lg transition-colors">
+                Eliminar
+            </a>
+            {% endif %}
         </div>
     </div>
+
+    <!-- Columna derecha: funciones -->
+    <div class="flex-1 mt-8 md:mt-0 md:pl-8 md:border-l md:border-borde">
+        <h2 class="text-texto font-semibold text-lg mb-4">Funciones disponibles</h2>
+
+        {% if funciones %}
+
+        <!-- Selector de días -->
+        <div class="flex gap-2 mb-6 flex-wrap">
+            {% regroup funciones by fecha as funciones_por_fecha %}
+            {% for grupo in funciones_por_fecha %}
+            <button type="button" data-fecha="{{ grupo.grouper|date:'Y-m-d' }}"
+                id="dia-{{ grupo.grouper|date:'Y-m-d' }}"
+                class="dia-btn px-4 py-3 rounded-lg border border-borde text-texto-sec hover:border-primary transition-colors text-center min-w-16">
+                <div class="text-xs uppercase font-semibold">{{ grupo.grouper|date:"D" }}</div>
+                <div class="text-sm">{{ grupo.grouper|date:"d/M" }}</div>
+            </button>
+            {% endfor %}
+        </div>
+
+        <!-- Paneles por día -->
+        {% regroup funciones by fecha as funciones_por_fecha %}
+        {% for grupo_fecha in funciones_por_fecha %}
+        <div class="dia-panel hidden" id="panel-{{ grupo_fecha.grouper|date:'Y-m-d' }}">
+            {% regroup grupo_fecha.list by get_formato_display as funciones_por_formato %}
+            {% for grupo_formato in funciones_por_formato %}
+            <div class="mb-6">
+                <h3 class="text-texto-sec text-xs font-semibold uppercase tracking-wider mb-3">
+                    {{ grupo_formato.grouper }}
+                </h3>
+                <div class="flex flex-wrap gap-2">
+                    {% for funcion in grupo_formato.list %}
+                    <button type="button" data-url="{% url 'seleccionar_asientos' funcion.pk %}"
+                        class="funcion-btn px-4 py-2 rounded-lg border border-borde text-texto-sec hover:border-primary transition-colors text-sm">
+                        {{ funcion.hora|time:"H:i" }}hs
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+
+        {% else %}
+        <p class="text-texto-sec">No hay funciones disponibles.</p>
+        {% endif %}
+
+        <!-- Botón comprar -->
+        <div class="mt-6">
+            <a href="#" id="btn-comprar"
+                class="inline-block bg-primary hover:bg-primary-hover text-texto text-sm font-semibold px-6 py-3 rounded-lg transition-colors opacity-40 pointer-events-none">
+                Comprar tickets
+            </a>
+        </div>
+    </div>
+
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Event listeners para días
+        document.querySelectorAll('.dia-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                seleccionarDia(this.dataset.fecha, this);
+            });
+        });
+
+        // Event listeners para funciones
+        document.querySelectorAll('.funcion-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                seleccionarFuncion(this, this.dataset.url);
+            });
+        });
+
+        // Seleccionar primer día por defecto
+        const primerDia = document.querySelector('.dia-btn');
+        if (primerDia) primerDia.click();
+    });
+
+    function seleccionarDia(fecha, btn) {
+        document.querySelectorAll('.dia-panel').forEach(p => p.classList.add('hidden'));
+        document.querySelectorAll('.dia-btn').forEach(b => {
+            b.classList.remove('border-primary', 'bg-white', 'text-black');
+            b.classList.add('border-borde', 'text-texto-sec');
+        });
+
+        document.getElementById('panel-' + fecha).classList.remove('hidden');
+        btn.classList.add('border-primary', 'bg-white', 'text-black');
+        btn.classList.remove('border-borde', 'text-texto-sec');
+
+        // Resetear función seleccionada
+        const btnComprar = document.getElementById('btn-comprar');
+        btnComprar.href = '#';
+        btnComprar.classList.add('opacity-40', 'pointer-events-none');
+        document.querySelectorAll('.funcion-btn').forEach(b => {
+            b.classList.remove('border-primary', 'bg-white', 'text-black');
+            b.classList.add('border-borde', 'text-texto-sec');
+        });
+    }
+
+    function seleccionarFuncion(btn, url) {
+        document.querySelectorAll('.funcion-btn').forEach(b => {
+            b.classList.remove('border-primary', 'bg-white', 'text-black');
+            b.classList.add('border-borde', 'text-texto-sec');
+        });
+
+        const btnComprar = document.getElementById('btn-comprar');
+        btn.classList.add('border-primary', 'bg-white', 'text-black');
+        btn.classList.remove('border-borde', 'text-texto-sec');
+        btnComprar.href = url;
+        btnComprar.classList.remove('opacity-40', 'pointer-events-none');
+    }
+</script>
 {% endblock %}

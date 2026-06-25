@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Confirmar reserva{% endblock %}
+
+{% block contenido %}
+<div class="max-w-5xl mx-auto">
+
+    <h1 class="text-texto font-semibold text-2xl mb-8">Confirmar reserva</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="funcion_id" value="{{ funcion_id }}">
+        <input type="hidden" name="confirmar" value="1">
+        {% for asiento_id in asientos_ids %}
+        <input type="hidden" name="asientos" value="{{ asiento_id }}">
+        {% endfor %}
+        {% for item in productos_seleccionados %}
+        <input type="hidden" name="producto_{{ item.producto.pk }}" value="{{ item.cantidad }}">
+        {% endfor %}
+
+        <div class="md:flex gap-8">
+
+            <!-- Columna izquierda: resumen -->
+            <div class="flex-1">
+                <div class="bg-card border border-borde rounded-xl p-6 mb-4">
+                    <h2 class="text-primary font-semibold mb-4">Función</h2>
+                    <p class="text-texto font-semibold text-lg">{{ funcion.pelicula.titulo }}</p>
+                    <div class="flex gap-4 text-texto-sec text-sm mt-1">
+                        <span>{{ funcion.fecha }}</span>
+                        <span>{{ funcion.hora|time:"H:i" }}</span>
+                        <span>{{ funcion.get_formato_display }}</span>
+                        <span>{{ funcion.sala }}</span>
+                    </div>
+                </div>
+
+                <div class="bg-card border border-borde rounded-xl p-6 mb-4">
+                    <h2 class="text-primary font-semibold mb-4">Asientos</h2>
+                    <div class="flex flex-wrap gap-2">
+                        {% for asiento in asientos %}
+                        <span class="bg-primary text-texto text-xs font-semibold px-3 py-1 rounded">
+                            {{ asiento.fila }}{{ asiento.numero }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                    <p class="text-texto-sec text-sm mt-3">
+                        {{ asientos|length }} entrada{% if asientos|length != 1 %}s{% endif %} × ${{ funcion.precio }} =
+                        <span class="text-texto {% if promocion %}line-through{% endif %}">${{ total_entradas }}</span>
+                    </p>
+                    {% if promocion %}
+                    <p class="text-green-400 text-sm mt-1">
+                        {{ promocion.titulo }} — ${{ total_entradas_con_descuento }}
+                    </p>
+                    {% endif %}
+                </div>
+
+                <div class="bg-card border border-primary rounded-xl p-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-texto-sec text-sm">Entradas</span>
+                        <span class="text-texto-sec text-sm">${{ total_entradas_con_descuento }}</span>
+                    </div>
+                    {% if total_candy %}
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-texto-sec text-sm">Candy</span>
+                        <span class="text-texto-sec text-sm">${{ total_candy }}</span>
+                    </div>
+                    {% endif %}
+                    {% if promocion %}
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-green-400 text-sm">Descuento aplicado</span>
+                        <span class="text-green-400 text-sm">-${{ descuento_entradas }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="flex justify-between items-center border-t border-borde pt-3 mt-2">
+                        <span class="text-texto font-semibold text-lg">Total a pagar</span>
+                        <span class="text-primary font-semibold text-2xl">${{ total }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna derecha: pago -->
+            <div class="bg-card border border-borde rounded-xl p-6 sticky top-24">
+                <h2 class="text-primary font-semibold mb-4">Método de pago</h2>
+
+                {% for field in pago_form %}
+                <div class="flex flex-col gap-1 mb-3">
+                    <label class="text-texto-sec text-sm">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                    <p class="text-red-500 text-xs">{{ field.errors }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                <div class="flex flex-col gap-3 mt-4">
+                    <button type="submit"
+                        class="w-full bg-primary hover:bg-primary-hover text-texto font-semibold px-8 py-3 rounded-lg transition-colors">
+                        Confirmar compra
+                    </button>
+                    <a href="javascript:history.back()"
+                        class="w-full text-center border border-borde text-texto-sec hover:text-texto px-6 py-3 rounded-lg transition-colors">
+                        ← Volver
+                    </a>
+                </div>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+<script>
+    const radioNueva = document.getElementById('radio-nueva');
+    const formNueva = document.getElementById('form-nueva-tarjeta');
+
+    if (radioNueva) {
+        document.querySelectorAll('input[name="tarjeta_id"]').forEach(radio => {
+            radio.addEventListener('change', function () {
+                formNueva.classList.toggle('hidden', this.value !== 'nueva');
+            });
+        });
+    }
+</script>
+{% endblock %}

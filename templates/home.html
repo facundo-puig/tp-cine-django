@@ -5,12 +5,14 @@
 {% block contenido %}
 
 <!-- Carrusel de promociones -->
-<section class="relative mb-12 rounded-2xl overflow-hidden border border-borde bg-card group/carrusel" aria-label="Promociones">
+<section class="relative mb-12 rounded-2xl overflow-hidden border border-borde bg-card group/carrusel"
+    aria-label="Promociones">
     <div id="carrusel-track" class="flex transition-transform duration-700 ease-out">
         {% for promo in promociones_carousel %}
         <a href="{% if promo.link %}{{ promo.link }}{% else %}{% url 'listado_promociones' %}{% endif %}"
             class="relative w-full shrink-0 aspect-[16/6] sm:aspect-[16/5]">
-            <img src="{{ promo.imagen.url }}" alt="{{ promo.titulo }}" class="absolute inset-0 w-full h-full object-cover">
+            <img src="{{ promo.imagen.url }}" alt="{{ promo.titulo }}"
+                class="absolute inset-0 w-full h-full object-cover">
             <div class="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent"></div>
             <div class="absolute left-6 right-6 bottom-5 sm:left-10 sm:bottom-8">
                 <span class="inline-block bg-primary text-texto text-xs font-medium px-2 py-1 rounded mb-2">
@@ -23,35 +25,33 @@
             </div>
         </a>
         {% empty %}
-        <!-- Slides de respaldo: reemplazar con promociones reales desde la vista (promociones_carousel) -->
-        {% for fallback in "123" %}
-        <div class="relative w-full shrink-0 aspect-[16/6] sm:aspect-[16/5] bg-gradient-to-br from-card via-background to-card flex items-center">
-            <div class="left-6 right-6 sm:left-10 px-6 sm:px-10">
-                <span class="inline-block bg-primary text-texto text-xs font-medium px-2 py-1 rounded mb-2">
-                    Promoción
-                </span>
-                <h2 class="text-texto text-xl sm:text-3xl font-semibold">Cargá tus promociones</h2>
-                <p class="text-texto-sec text-sm sm:text-base mt-1 max-w-xl">
-                    Pasá <code class="text-primary">promociones_carousel</code> en el contexto de la vista para mostrar imágenes reales acá.
+        <div class="w-full shrink-0 aspect-[16/6] sm:aspect-[16/5] flex items-center justify-center bg-card">
+            <div class="text-center px-6">
+                <h2 class="text-xl sm:text-2xl font-semibold text-texto mb-2">
+                    No hay promociones activas
+                </h2>
+                <p class="text-texto-sec">
+                    Volvé más tarde para conocer nuestras próximas promociones.
                 </p>
             </div>
         </div>
         {% endfor %}
-        {% endfor %}
     </div>
 
     <!-- Flechas -->
-    <button type="button" id="carrusel-prev" aria-label="Anterior"
-        class="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-background/70 border border-borde
-               flex items-center justify-center text-texto-sec hover:text-texto hover:border-primary
-               opacity-0 group-hover/carrusel:opacity-100 transition-all">
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <button type="button" id="carrusel-prev" aria-label="Anterior" class="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-background/70 border border-borde
+                flex items-center justify-center text-texto-sec hover:text-texto hover:border-primary
+                opacity-0 group-hover/carrusel:opacity-100 transition-all">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
     </button>
-    <button type="button" id="carrusel-next" aria-label="Siguiente"
-        class="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-background/70 border border-borde
-               flex items-center justify-center text-texto-sec hover:text-texto hover:border-primary
-               opacity-0 group-hover/carrusel:opacity-100 transition-all">
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <button type="button" id="carrusel-next" aria-label="Siguiente" class="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-background/70 border border-borde
+                flex items-center justify-center text-texto-sec hover:text-texto hover:border-primary
+                opacity-0 group-hover/carrusel:opacity-100 transition-all">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
     </button>
 
     <!-- Indicadores -->
@@ -59,111 +59,61 @@
 </section>
 
 <script>
-(function () {
+    // Función Carrusel
+    (function () {
+        const track = document.getElementById('carrusel-track');
+        const slides = track ? Array.from(track.children) : [];
+        const dotsWrap = document.getElementById('carrusel-dots');
+        const prevBtn = document.getElementById('carrusel-prev');
+        const nextBtn = document.getElementById('carrusel-next');
 
-    // ---------------------------------------------------------------
-    // BLOQUE 1: Buscar los elementos del carrusel en la página
-    // ---------------------------------------------------------------
-    // "track" es la franja que contiene todas las promos, una al lado
-    // de la otra. "slides" es la lista de esas promos (cada <a> de
-    // arriba). "dotsWrap" es donde van los puntitos indicadores, y
-    // prevBtn/nextBtn son las flechas de ir para atrás/adelante.
-    const track = document.getElementById('carrusel-track');
-    const slides = track ? Array.from(track.children) : [];
-    const dotsWrap = document.getElementById('carrusel-dots');
-    const prevBtn = document.getElementById('carrusel-prev');
-    const nextBtn = document.getElementById('carrusel-next');
+        if (!track || slides.length <= 1) return;
 
-    // Si no hay carrusel en la página, o hay 1 sola promo (o ninguna),
-    // no tiene sentido mover nada, así que el script se corta acá.
-    if (!track || slides.length <= 1) return;
+        let index = 0;
+        let timer = null;
 
-    // "index" guarda en qué promo estamos parados ahora (0 = la primera).
-    // "timer" guarda el cronómetro del avance automático, para poder
-    // pausarlo y reiniciarlo después.
-    let index = 0;
-    let timer = null;
-
-    // ---------------------------------------------------------------
-    // BLOQUE 2: Crear los puntitos (uno por cada promo)
-    // ---------------------------------------------------------------
-    // Por cada promo, se crea un botón circular chiquito. El primero
-    // arranca "lleno" (resaltado) porque es la promo que se ve al
-    // entrar. Al hacer click en un punto, salta directo a esa promo.
-    slides.forEach((_, i) => {
-        const dot = document.createElement('button');
-        dot.setAttribute('aria-label', 'Ir a la promoción ' + (i + 1));
-        dot.className = 'w-1.5 h-1.5 rounded-full transition-all ' + (i === 0 ? 'bg-primary w-4' : 'bg-texto-sec/50');
-        dot.addEventListener('click', () => goTo(i));
-        dotsWrap.appendChild(dot);
-    });
-
-    // ---------------------------------------------------------------
-    // BLOQUE 3: Dibujar en pantalla qué promo está activa
-    // ---------------------------------------------------------------
-    // Esta función es la que realmente "mueve" el carrusel: desplaza
-    // la franja de promos hacia la izquierda según en qué número
-    // estemos (como pasar las hojas de un álbum, una al costado de
-    // la otra). También actualiza qué puntito se ve resaltado abajo.
-    function render() {
-        track.style.transform = 'translateX(-' + (index * 100) + '%)';
-        Array.from(dotsWrap.children).forEach((dot, i) => {
-            dot.className = 'h-1.5 rounded-full transition-all ' + (i === index ? 'bg-primary w-4' : 'bg-texto-sec/50 w-1.5');
+        // Crear puntitos indicadores
+        slides.forEach((_, i) => {
+            const dot = document.createElement('button');
+            dot.setAttribute('aria-label', 'Ir a la promoción ' + (i + 1));
+            dot.className = 'w-1.5 h-1.5 rounded-full transition-all ' + (i === 0 ? 'bg-primary w-4' : 'bg-texto-sec/50');
+            dot.addEventListener('click', () => goTo(i));
+            dotsWrap.appendChild(dot);
         });
-    }
 
-    // ---------------------------------------------------------------
-    // BLOQUE 4: Funciones para cambiar de promo
-    // ---------------------------------------------------------------
-    // "goTo" salta a una promo puntual por su número. El cálculo con
-    // "% slides.length" (el resto de la división) es lo que hace que,
-    // al llegar a la última promo y seguir para adelante, vuelva a la
-    // primera en vez de quedarse trabado (y al revés, yendo para atrás
-    // desde la primera, vuelve a la última).
-    function goTo(i) {
-        index = (i + slides.length) % slides.length;
+        // Mover el track y actualizar puntitos
+        function render() {
+            track.style.transform = 'translateX(-' + (index * 100) + '%)';
+            Array.from(dotsWrap.children).forEach((dot, i) => {
+                dot.className = 'h-1.5 rounded-full transition-all ' + (i === index ? 'bg-primary w-4' : 'bg-texto-sec/50 w-1.5');
+            });
+        }
+
+        // Ir a un slide específico
+        function goTo(i) {
+            index = (i + slides.length) % slides.length;
+            render();
+            restart();
+        }
+
+        function next() { goTo(index + 1); }
+        function prev() { goTo(index - 1); }
+
+        // Reiniciar el temporizador de avance automático
+        function restart() {
+            clearInterval(timer);
+            timer = setInterval(next, 5000);
+        }
+
+        // Flechas y pausa al hacer hover
+        nextBtn.addEventListener('click', next);
+        prevBtn.addEventListener('click', prev);
+        track.parentElement.addEventListener('mouseenter', () => clearInterval(timer));
+        track.parentElement.addEventListener('mouseleave', restart);
+
         render();
         restart();
-    }
-
-    // "next" y "prev" son simplemente "ir una promo para adelante" o
-    // "ir una promo para atrás", usando la función de arriba.
-    function next() { goTo(index + 1); }
-    function prev() { goTo(index - 1); }
-
-    // ---------------------------------------------------------------
-    // BLOQUE 5: Avance automático cada 5 segundos
-    // ---------------------------------------------------------------
-    // "restart" pone en marcha (o reinicia) el cronómetro: cada 5000
-    // milisegundos (5 segundos), avanza sola a la siguiente promo.
-    // Se llama "restart" y no solo "start" porque cada vez que el
-    // usuario interactúa (click en flecha o punto), conviene reiniciar
-    // la cuenta de 5 segundos desde cero, para no cortarle la promo
-    // recién elegida a la mitad.
-    function restart() {
-        clearInterval(timer);
-        timer = setInterval(next, 5000);
-    }
-
-    // ---------------------------------------------------------------
-    // BLOQUE 6: Conectar los botones y el mouse a las funciones
-    // ---------------------------------------------------------------
-    // Las flechas llaman a next/prev. Y si el usuario pasa el mouse
-    // por arriba del carrusel, se pausa el avance automático (para
-    // que pueda leer tranquilo); al sacar el mouse, se reanuda.
-    nextBtn.addEventListener('click', next);
-    prevBtn.addEventListener('click', prev);
-    track.parentElement.addEventListener('mouseenter', () => clearInterval(timer));
-    track.parentElement.addEventListener('mouseleave', restart);
-
-    // ---------------------------------------------------------------
-    // BLOQUE 7: Arranque inicial
-    // ---------------------------------------------------------------
-    // Apenas carga la página: se dibuja la primera promo (render) y
-    // se pone en marcha el avance automático (restart).
-    render();
-    restart();
-})();
+    })();
 </script>
 
 <h1 class="text-2xl font-semibold text-texto mb-8">En cartelera</h1>

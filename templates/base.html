@@ -27,13 +27,17 @@
 
 <body class="bg-background text-texto min-h-screen">
 
-    <nav class="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-borde px-8 py-4 flex items-center justify-between">
+    <nav
+        class="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-borde px-8 py-4 flex items-center justify-between">
         <a href="{% url 'home' %}" class="flex items-center gap-2 group">
-            <svg class="w-6 h-6 text-primary group-hover:text-primary-hover transition-colors" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/>
-                <path d="M3 9h2.2M3 15h2.2M18.8 9H21M18.8 15H21M8 5v14M16 5v14" stroke="currentColor" stroke-width="1.6"/>
+            <svg class="w-6 h-6 text-primary group-hover:text-primary-hover transition-colors" viewBox="0 0 24 24"
+                fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.6" />
+                <path d="M3 9h2.2M3 15h2.2M18.8 9H21M18.8 15H21M8 5v14M16 5v14" stroke="currentColor"
+                    stroke-width="1.6" />
             </svg>
-            <span class="text-texto font-semibold text-xl tracking-wide group-hover:text-primary-hover transition-colors">
+            <span
+                class="text-texto font-semibold text-xl tracking-wide group-hover:text-primary-hover transition-colors">
                 {{ nombre_cine }}
             </span>
         </a>
@@ -42,7 +46,7 @@
         <input type="checkbox" id="nav-toggle" class="hidden peer">
         <label for="nav-toggle" class="md:hidden cursor-pointer text-texto-sec hover:text-texto transition-colors">
             <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                <path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/>
+                <path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" />
             </svg>
         </label>
 
@@ -50,23 +54,26 @@
                     absolute md:relative top-full left-0 right-0 md:top-auto bg-background md:bg-transparent
                     border-b md:border-0 border-borde px-8 md:px-0 py-4 md:py-0">
 
-            <a href="{% url 'home' %}"
-                class="relative px-3 py-2 rounded-md hover:text-texto hover:bg-card md:hover:bg-transparent transition-colors
-                       after:absolute after:left-3 after:right-3 after:-bottom-0.5 after:h-px after:bg-primary
-                       after:scale-x-0 after:transition-transform after:origin-left hover:after:scale-x-100">
+            <a href="{% url 'home' %}" class="relative px-3 py-2 rounded-md hover:text-texto hover:bg-card md:hover:bg-transparent transition-colors
+                    after:absolute after:left-3 after:right-3 after:-bottom-0.5 after:h-px after:bg-primary
+                    after:scale-x-0 after:transition-transform after:origin-left hover:after:scale-x-100">
                 Cartelera
             </a>
 
             <!-- Dropdown de películas -->
             <div class="relative group">
-                <span class="flex items-center gap-1 px-3 py-2 rounded-md hover:text-texto hover:bg-card md:hover:bg-transparent transition-colors cursor-pointer">
+                <span
+                    class="flex items-center gap-1 px-3 py-2 rounded-md hover:text-texto hover:bg-card md:hover:bg-transparent transition-colors cursor-pointer">
                     Películas
-                    <svg class="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+                    <svg class="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                 </span>
-                <div class="static md:absolute md:top-full mt-1 hidden group-hover:block bg-card border border-borde rounded-lg py-2 w-full md:w-52 z-10
-                            shadow-xl shadow-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                <div class="static md:absolute md:top-full bg-card border border-borde rounded-lg py-2 w-full md:w-52 z-10
+                            shadow-xl shadow-black/40 invisible opacity-0
+                            group-hover:visible group-hover:opacity-100
+                            transition-all duration-150">
                     {% for pelicula in peliculas_cartelera %}
                     <a href="{% url 'detalle_pelicula' pelicula.pk %}"
                         class="block px-4 py-2 text-texto-sec hover:text-texto hover:bg-background transition-colors text-sm">
@@ -78,12 +85,35 @@
                 </div>
             </div>
 
-            <a href="{% url 'listado_promociones' %}"
-                class="relative px-3 py-2 rounded-md hover:text-texto hover:bg-card md:hover:bg-transparent transition-colors
-                       after:absolute after:left-3 after:right-3 after:-bottom-0.5 after:h-px after:bg-primary
-                       after:scale-x-0 after:transition-transform after:origin-left hover:after:scale-x-100">
+            <a href="{% url 'listado_promociones' %}" class="relative px-3 py-2 rounded-md hover:text-texto hover:bg-card md:hover:bg-transparent transition-colors
+                after:absolute after:left-3 after:right-3 after:-bottom-0.5 after:h-px after:bg-primary
+                after:scale-x-0 after:transition-transform after:origin-left hover:after:scale-x-100">
                 Promociones
             </a>
+
+            <a href="{% url 'mis_reservas' %}" class="relative px-3 py-2 rounded-md hover:text-texto hover:bg-card md:hover:bg-transparent transition-colors
+                after:absolute after:left-3 after:right-3 after:-bottom-0.5 after:h-px after:bg-primary
+                after:scale-x-0 after:transition-transform after:origin-left hover:after:scale-x-100">
+                Mis Reservas
+            </a>
+
+            <div class="flex items-center gap-2 md:ml-4">
+                {% if user.is_authenticated %}
+                <span class="text-texto-sec text-sm">{{ user.username }}</span>
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit"
+                        class="px-3 py-2 rounded-md text-sm text-texto-sec hover:text-texto hover:bg-card transition-colors">
+                        Cerrar sesión
+                    </button>
+                </form>
+                {% else %}
+                <a href="{% url 'login' %}"
+                    class="px-4 py-2 rounded-md text-sm font-semibold bg-primary hover:bg-primary-hover text-texto transition-colors">
+                    Iniciar Sesión
+                </a>
+                {% endif %}
+            </div>
         </div>
     </nav>
 

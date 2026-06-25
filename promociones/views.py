@@ -1,18 +1,16 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import permission_required, login_required
+from django.contrib.auth.decorators import permission_required
 from .models import Promocion
 from .forms import PromocionForm
 
 # Create your views here.
 
 # Listado de promociones
-@login_required
 def listado_promociones(request):
     promociones = Promocion.objects.filter(activa=True)
     return render(request, 'promociones/listado.html', {'promociones': promociones})
 
 # Detalle de promoción
-@login_required
 def detalle_promocion(request, pk):
     promocion = get_object_or_404(Promocion, pk=pk)
     return render(request, 'promociones/detalle.html', {'promocion': promocion})

@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Seleccionar candy{% endblock %}
+
+{% block contenido %}
+<div class="max-w-4xl mx-auto">
+
+    <h1 class="text-texto font-semibold text-2xl mb-2">Candy</h1>
+    <p class="text-texto-sec text-sm mb-8">Opcional — podés saltear este paso</p>
+
+    <div id="precios-data" data-precios='{{ precios_json }}'></div>
+
+    <form method="post" action="{% url 'confirmar_reserva' %}">
+        {% csrf_token %}
+        <input type="hidden" name="funcion_id" value="{{ funcion_id }}">
+        {% for asiento_id in asientos_ids %}
+        <input type="hidden" name="asientos" value="{{ asiento_id }}">
+        {% endfor %}
+
+        <!-- Productos por categoría -->
+        {% regroup productos by get_categoria_display as productos_por_categoria %}
+        {% for grupo in productos_por_categoria %}
+        <div class="mb-8">
+            <h2 class="text-texto font-semibold text-lg mb-4 border-b border-borde pb-2">
+                {{ grupo.grouper }}
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for producto in grupo.list %}
+                <div class="bg-card border border-borde rounded-xl p-4 flex flex-col gap-3">
+                    {% if producto.imagen %}
+                    <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}"
+                        class="w-full h-32 object-cover rounded-lg">
+                    {% endif %}
+                    <div>
+                        <h3 class="text-texto font-semibold text-sm">{{ producto.nombre }}</h3>
+                        {% if producto.descripcion %}
+                        <p class="text-texto-sec text-xs mt-1">{{ producto.descripcion }}</p>
+                        {% endif %}
+                        <p class="text-primary font-semibold text-sm mt-2">${{ producto.precio }}</p>
+                    </div>
+                    <div class="flex items-center gap-3 mt-auto">
+                        <button type="button" onclick="cambiarCantidad('{{ producto.pk }}', -1)"
+                            class="w-7 h-7 rounded-full border border-borde text-texto-sec hover:border-primary hover:text-primary transition-colors text-lg leading-none">
+                            −
+                        </button>
+                        <span id="cant-{{ producto.pk }}" class="text-texto text-sm w-4 text-center">0</span>
+                        <button type="button" onclick="cambiarCantidad('{{ producto.pk }}', 1)"
+                            class="w-7 h-7 rounded-full border border-borde text-texto-sec hover:border-primary hover:text-primary transition-colors text-lg leading-none">
+                            +
+                        </button>
+                        <input type="hidden" name="producto_{{ producto.pk }}" id="input-{{ producto.pk }}" value="0">
+                        <span class="text-texto-sec text-xs ml-auto">${{ producto.precio }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Total candy -->
+        <div class="bg-card border border-borde rounded-xl p-6 mb-6">
+            <p class="text-texto-sec text-sm mb-1">Total candy: $<span id="total-candy">0</span></p>
+        </div>
+
+        <div class="flex justify-center gap-4">
+            <a href="javascript:history.back()"
+                class="border border-borde text-texto-sec hover:text-texto px-6 py-3 rounded-lg transition-colors">
+                ← Volver
+            </a>
+            <button type="submit"
+                class="bg-primary hover:bg-primary-hover text-texto font-semibold px-8 py-3 rounded-lg transition-colors">
+                Confirmar reserva →
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    const precios = JSON.parse(document.getElementById('precios-data').dataset.precios);
+
+    function cambiarCantidad(id, delta) {
+        const span = document.getElementById('cant-' + id);
+        const input = document.getElementById('input-' + id);
+        let cant = parseInt(span.textContent) + delta;
+        if (cant < 0) cant = 0;
+        span.textContent = cant;
+        input.value = cant;
+        actualizarTotal();
+    }
+
+    function actualizarTotal() {
+        let total = 0;
+        for (const id in precios) {
+            const cant = parseInt(document.getElementById('cant-' + id).textContent);
+            total += cant * precios[id];
+        }
+        document.getElementById('total-candy').textContent = total.toLocaleString('es-AR');
+    }
+</script>
+{% endblock %}

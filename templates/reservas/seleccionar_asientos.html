@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Seleccionar asientos{% endblock %}
+
+{% block contenido %}
+<div class="max-w-4xl mx-auto">
+
+    <!-- Info de la función -->
+    <div class="bg-card border border-borde rounded-xl p-6 mb-8">
+        <h1 class="text-texto font-semibold text-xl mb-2">{{ funcion.pelicula.titulo }}</h1>
+        <div class="flex gap-4 text-texto-sec text-sm">
+            <span>{{ funcion.fecha }}</span>
+            <span>{{ funcion.hora|time:"H:i" }}</span>
+            <span>{{ funcion.get_formato_display }}</span>
+            <span class="text-primary font-semibold">${{ funcion.precio }} por entrada</span>
+        </div>
+    </div>
+
+    <!-- Pantalla -->
+    <div class="text-center mb-8">
+        <div class="h-2 bg-primary/40 rounded-full mx-auto w-2/3 mb-2"></div>
+        <span class="text-texto-sec text-xs tracking-widest uppercase">Pantalla</span>
+    </div>
+
+    <!-- Leyenda -->
+    <div class="flex justify-center gap-6 mb-6 text-sm">
+        <div class="flex items-center gap-2">
+            <div class="w-5 h-5 rounded bg-card border border-borde"></div>
+            <span class="text-texto-sec">Disponible</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <div class="w-5 h-5 rounded bg-primary"></div>
+            <span class="text-texto-sec">Seleccionado</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <div class="w-5 h-5 rounded bg-red-600"></div>
+            <span class="text-texto-sec">Ocupado</span>
+        </div>
+    </div>
+
+    <div id="funcion-data" data-precio="{{ funcion.precio }}"></div>
+
+    <!-- Grilla de asientos -->
+    <form method="post" action="{% url 'seleccionar_candy' %}" id="form-asientos">
+        {% csrf_token %}
+        <input type="hidden" name="funcion_id" value="{{ funcion.pk }}">
+
+        <div class="flex flex-col items-center gap-2 mb-8">
+            {% regroup asientos by fila as asientos_por_fila %}
+            {% for grupo in asientos_por_fila %}
+            <div class="flex items-center gap-2">
+                <span class="text-texto-sec text-xs w-4">{{ grupo.grouper }}</span>
+                <div class="flex gap-2">
+                    {% for asiento in grupo.list %}
+                    {% if asiento.pk in asientos_ocupados %}
+                    <button type="button" disabled
+                        class="w-8 h-8 rounded text-xs font-medium bg-red-600 border border-borde text-texto-sec cursor-not-allowed opacity-50">
+                        {{ asiento.numero }}
+                    </button>
+                    {% else %}
+                    <button type="button" data-asiento-id="{{ asiento.pk }}" onclick="toggleAsiento(this)"
+                        class="asiento w-8 h-8 rounded text-xs font-medium bg-card border border-borde hover:border-primary transition-colors text-texto-sec">
+                        {{ asiento.numero }}
+                    </button>
+                    <input type="checkbox" name="asientos" value="{{ asiento.pk }}" id="check-{{ asiento.pk }}"
+                        class="hidden">
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Total -->
+        <div class="text-center mb-6">
+            <p class="text-texto-sec text-sm mb-1">Asientos seleccionados: <span id="cantidad">0</span></p>
+            <p class="text-texto font-semibold text-xl">Total: $<span id="total">0</span></p>
+        </div>
+
+        <div class="flex justify-center">
+            <button type="submit" id="btn-continuar" disabled
+                class="bg-primary hover:bg-primary-hover text-texto font-semibold px-8 py-3 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+                Continuar con candy →
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    const precio = parseInt(document.getElementById('funcion-data').dataset.precio);
+    let seleccionados = [];
+
+    function toggleAsiento(btn) {
+        const id = btn.dataset.asientoId;
+        const check = document.getElementById('check-' + id);
+
+        if (seleccionados.includes(id)) {
+            seleccionados = seleccionados.filter(a => a !== id);
+            btn.classList.remove('bg-primary', 'border-primary', 'text-texto');
+            btn.classList.add('bg-card', 'border-borde', 'text-texto-sec');
+            check.checked = false;
+        } else {
+            seleccionados.push(id);
+            btn.classList.add('bg-primary', 'border-primary', 'text-texto');
+            btn.classList.remove('bg-card', 'border-borde', 'text-texto-sec');
+            check.checked = true;
+        }
+
+        document.getElementById('cantidad').textContent = seleccionados.length;
+        document.getElementById('total').textContent = (seleccionados.length * precio).toLocaleString('es-AR');
+        document.getElementById('btn-continuar').disabled = seleccionados.length === 0;
+    }
+</script>
+{% endblock %}

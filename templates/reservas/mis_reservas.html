@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Mis reservas{% endblock %}
+
+{% block contenido %}
+<div class="max-w-4xl mx-auto">
+
+    <h1 class="text-texto font-semibold text-2xl mb-8">Mis reservas</h1>
+
+    {% if reservas %}
+    {% for reserva in reservas %}
+    <div class="bg-card border border-borde rounded-xl p-6 mb-4 hover:border-primary transition-colors">
+        <div class="flex items-start justify-between mb-4">
+            <div>
+                <h2 class="text-texto font-semibold text-lg">{{ reserva.funcion.pelicula.titulo }}</h2>
+                <div class="flex gap-4 text-texto-sec text-sm mt-1">
+                    <span>{{ reserva.funcion.fecha }}</span>
+                    <span>{{ reserva.funcion.hora|time:"H:i" }}</span>
+                    <span>{{ reserva.funcion.get_formato_display }}</span>
+                    <span>{{ reserva.funcion.sala }}</span>
+                </div>
+            </div>
+            <span class="text-xs font-semibold px-3 py-1 rounded-full
+                    {% if reserva.estado == 'confirmada' %}bg-green-900 text-green-300
+                    {% elif reserva.estado == 'pendiente' %}bg-yellow-900 text-yellow-300
+                    {% else %}bg-red-900 text-red-300{% endif %}">
+                {{ reserva.get_estado_display }}
+            </span>
+        </div>
+
+        <div class="flex flex-wrap gap-2 mb-4">
+            {% for asiento in reserva.asientos.all %}
+            <span class="bg-primary text-texto text-xs font-semibold px-3 py-1 rounded">
+                {{ asiento.fila }}{{ asiento.numero }}
+            </span>
+            {% endfor %}
+        </div>
+
+        {% if reserva.reservaproducto_set.all %}
+        <div class="border-t border-borde pt-3 mb-3">
+            <p class="text-texto-sec text-xs mb-2">Candy:</p>
+            <div class="flex flex-wrap gap-2">
+                {% for rp in reserva.reservaproducto_set.all %}
+                <span class="text-texto-sec text-xs">{{ rp.producto.nombre }} x{{ rp.cantidad }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="flex justify-between items-center border-t border-borde pt-3">
+            <span class="text-texto-sec text-xs">{{ reserva.fecha_creacion|date:"d/m/Y H:i" }}</span>
+            <span class="text-primary font-semibold">${{ reserva.total }}</span>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="text-center py-16">
+        <p class="text-texto-sec mb-4">No tenés reservas todavía.</p>
+        <a href="{% url 'home' %}"
+            class="bg-primary hover:bg-primary-hover text-texto font-semibold px-6 py-3 rounded-lg transition-colors">
+            Ver cartelera
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
